@@ -16,7 +16,7 @@ module MedianFinder_7num(
         .max()
     );
 
-	Comparator2 com_2(
+    Comparator2 com_2(
         .A(com_1.max),
         .B(num3),
         .min(),
@@ -58,14 +58,14 @@ module MedianFinder_7num(
         .max()
     );
 
-	Comparator2 com_b(
+    Comparator2 com_b(
         .A(com_4.min),
         .B(com_a.min),
         .min(),
         .max()
     );
 
-	Comparator2 com_c(
+    Comparator2 com_c(
         .A(com_3.min),
         .B(com_b.min),
         .min(),
