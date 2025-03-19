@@ -36,10 +36,10 @@ module MedianFinder_5num(
     );
 
     MedianFinder_3num med3(
-		.num1(com_3.max),
-		.num2(com_4.min),
-		.num3(num5),
-		.median()
+	.num1(com_3.max),
+	.num2(com_4.min),
+	.num3(num5),
+	.median()
     );
 
     assign median = med3.median;
