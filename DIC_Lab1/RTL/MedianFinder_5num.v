@@ -42,5 +42,5 @@ module MedianFinder_5num(
 	.median()
     );
 
-	assign median = med3.median;
+    assign median = med3.median;
 endmodule
