@@ -65,7 +65,7 @@ module MedianFinder_7num(
 	.num4(com_4.min),
 	.num5(num7),
 	.median()
-	);
+    );
 
     assign median = median_5.median;
 endmodule
