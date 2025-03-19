@@ -14,7 +14,7 @@ module MedianFinder_5num(
         .max()
     );
 
-	Comparator2 com_2(
+    Comparator2 com_2(
         .A(num3),
         .B(num4),
         .min(),
