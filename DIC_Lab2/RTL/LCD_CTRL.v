@@ -260,34 +260,58 @@ module LCD_CTRL(
             OPERATION: begin
                 case (cmd)
                     MAX: begin
-                        ImageBuffer[p1] <= max;  ImageBuffer[p2] <= max;
-                        ImageBuffer[p3] <= max;  ImageBuffer[p4] <= max;
-                        ImageBuffer[p5] <= max;  ImageBuffer[p6] <= max;
-                        ImageBuffer[p7] <= max;  ImageBuffer[p8] <= max;
-                        ImageBuffer[p9] <= max;  ImageBuffer[p10] <= max;
-                        ImageBuffer[p11] <= max; ImageBuffer[p12] <= max;
-                        ImageBuffer[p13] <= max; ImageBuffer[p14] <= max;
-                        ImageBuffer[p15] <= max; ImageBuffer[p16] <= max;
+                        ImageBuffer[p1] <= max;
+                        ImageBuffer[p2] <= max;
+                        ImageBuffer[p3] <= max;
+                        ImageBuffer[p4] <= max;
+                        ImageBuffer[p5] <= max;
+                        ImageBuffer[p6] <= max;
+                        ImageBuffer[p7] <= max;
+                        ImageBuffer[p8] <= max;
+                        ImageBuffer[p9] <= max;
+                        ImageBuffer[p10] <= max;
+                        ImageBuffer[p11] <= max;
+                        ImageBuffer[p12] <= max;
+                        ImageBuffer[p13] <= max;
+                        ImageBuffer[p14] <= max;
+                        ImageBuffer[p15] <= max;
+                        ImageBuffer[p16] <= max;
                     end
                     MIN: begin
-                        ImageBuffer[p1] <= min;  ImageBuffer[p2] <= min;
-                        ImageBuffer[p3] <= min;  ImageBuffer[p4] <= min;
-                        ImageBuffer[p5] <= min;  ImageBuffer[p6] <= min;
-                        ImageBuffer[p7] <= min;  ImageBuffer[p8] <= min;
-                        ImageBuffer[p9] <= min;  ImageBuffer[p10] <= min;
-                        ImageBuffer[p11] <= min; ImageBuffer[p12] <= min;
-                        ImageBuffer[p13] <= min; ImageBuffer[p14] <= min;
-                        ImageBuffer[p15] <= min; ImageBuffer[p16] <= min;
+                        ImageBuffer[p1] <= min;
+                        ImageBuffer[p2] <= min;
+                        ImageBuffer[p3] <= min;
+                        ImageBuffer[p4] <= min;
+                        ImageBuffer[p5] <= min;
+                        ImageBuffer[p6] <= min;
+                        ImageBuffer[p7] <= min;
+                        ImageBuffer[p8] <= min;
+                        ImageBuffer[p9] <= min;
+                        ImageBuffer[p10] <= min;
+                        ImageBuffer[p11] <= min;
+                        ImageBuffer[p12] <= min;
+                        ImageBuffer[p13] <= min;
+                        ImageBuffer[p14] <= min;
+                        ImageBuffer[p15] <= min;
+                        ImageBuffer[p16] <= min;
                     end
                     AVERAGE: begin
-                        ImageBuffer[p1] <= sum[9:4];  ImageBuffer[p2] <= sum[9:4];
-                        ImageBuffer[p3] <= sum[9:4];  ImageBuffer[p4] <= sum[9:4];
-                        ImageBuffer[p5] <= sum[9:4];  ImageBuffer[p6] <= sum[9:4];
-                        ImageBuffer[p7] <= sum[9:4];  ImageBuffer[p8] <= sum[9:4];
-                        ImageBuffer[p9] <= sum[9:4];  ImageBuffer[p10] <= sum[9:4];
-                        ImageBuffer[p11] <= sum[9:4]; ImageBuffer[p12] <= sum[9:4];
-                        ImageBuffer[p13] <= sum[9:4]; ImageBuffer[p14] <= sum[9:4];
-                        ImageBuffer[p15] <= sum[9:4]; ImageBuffer[p16] <= sum[9:4];
+                        ImageBuffer[p1] <= sum[9:4];
+                        ImageBuffer[p2] <= sum[9:4];
+                        ImageBuffer[p3] <= sum[9:4];
+                        ImageBuffer[p4] <= sum[9:4];
+                        ImageBuffer[p5] <= sum[9:4];
+                        ImageBuffer[p6] <= sum[9:4];
+                        ImageBuffer[p7] <= sum[9:4];
+                        ImageBuffer[p8] <= sum[9:4];
+                        ImageBuffer[p9] <= sum[9:4];
+                        ImageBuffer[p10] <= sum[9:4];
+                        ImageBuffer[p11] <= sum[9:4];
+                        ImageBuffer[p12] <= sum[9:4];
+                        ImageBuffer[p13] <= sum[9:4];
+                        ImageBuffer[p14] <= sum[9:4];
+                        ImageBuffer[p15] <= sum[9:4];
+                        ImageBuffer[p16] <= sum[9:4];
                     end
                 endcase
             end
@@ -298,5 +322,4 @@ module LCD_CTRL(
             end
         endcase
     end
-
 endmodule
