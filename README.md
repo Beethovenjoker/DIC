@@ -13,3 +13,4 @@ Digital IC Design Labs.
 - Lab2: [LCD Controller](https://hackmd.io/Ugxh4f9ZRNmBpsJX2QjbRg?view)
 - Lab3: [Fast Fourier Transform](https://hackmd.io/FKGy2xtwQdmacaYgsSl2bg?view)
 - Lab4: [Atrous Convolution with Bus Interface](https://hackmd.io/h7B9mmAASl203qYOvXbxUA)
+- Lab5: [Max Convex Hull](https://hackmd.io/fBpYz9i6SDSIJxTmB30SvQ?view)
