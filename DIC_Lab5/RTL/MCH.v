@@ -257,5 +257,3 @@ module MCH (
     assign Done = (cur_state == DONE);
 
 endmodule
-
-endmodule
