@@ -17,16 +17,17 @@ module MCH (
 
     reg [4:0] load_counter;  
     reg [4:0] anchor_idx;
-    reg       swap_need;  
 
-    // registers for bubble sorting
-    wire [7:0] ax;
-    wire [7:0] ay;
-    wire signed [18:0] cp;
-    reg [4:0] pass_idx, i_idx;
+    // registers for insertion sort
+    wire signed [18:0] cp_insert;
     reg [1:0] swapped_anchor;
-    reg       flag;
     reg [7:0] tmp_x, tmp_y;
+    reg [4:0] sorted_idx;  // current element to insert
+    reg [4:0] shift_idx;   // index used to scan left for insertion
+    reg       inserting;
+    reg shift_phase;
+    reg [7:0] shift_x, shift_y;
+
 
     // registers for stack
     reg [4:0] stack [0:19]; 
@@ -36,7 +37,7 @@ module MCH (
     // registers for area calculation
     reg signed [31:0] sum;
     reg        [4:0] area_idx;
-    wire        [4:0] j;
+    wire       [4:0] j;
 
     //================================================================
     //  Functions
@@ -83,7 +84,7 @@ module MCH (
                 next_state = (load_counter == 5'd19) ? SORT : LOAD;
             end
             SORT: begin
-                next_state = (pass_idx == 5'd1) ? LOWER : SORT;
+                next_state = (sorted_idx == 5'd20) ? LOWER : SORT;
             end
             LOWER: begin
                 next_state = (scan_idx == 5'd20) ? AREA : LOWER;
@@ -132,71 +133,61 @@ module MCH (
 
 
     //================================================================
-    //  Bubble Sort
+    //  Insertion Sort
     //================================================================
-
-    assign ax = px[0];
-    assign ay = py[0];  
-
-    // Polar-angle comparison: if cross < 0, idx(i) is after idx(i+1) (swap needed)
-    assign cp = cross(ax, ay, px[i_idx],   py[i_idx], px[i_idx+1], py[i_idx+1]);
-
-    // If the polar angles are equal (collinear), compare distances—place the nearer point first
-    wire swap_cond = (cp < 0) ;
+    
+    assign cp_insert = (shift_idx < 20) ? cross(px[0], py[0], px[shift_idx], py[shift_idx], tmp_x, tmp_y) : 19'd0;
     
     integer i;
     always @(posedge clk) begin
         if (reset || cur_state == DONE) begin
-            for(i = 0; i < 20; i = i + 1) begin
+            sorted_idx     <= 5'd2;
+            shift_idx      <= 5'd1;
+            inserting      <= 1'b0;
+            shift_phase    <= 1'b0;
+            swapped_anchor <= 2'd0;
+            tmp_x          <= 8'd0;
+            tmp_y          <= 8'd0;
+            for (i = 0; i < 20; i = i + 1) begin
                 px[i] <= 8'd0;
                 py[i] <= 8'd0;
             end
-            pass_idx <= 5'd19;
-            i_idx    <= 5'd1;
-            swapped_anchor <= 2'b0;
-            flag <= 1'b0;
-            swap_need <= 1'b0;
         end else if (cur_state == LOAD) begin
             px[load_counter] <= X;
             py[load_counter] <= Y;
         end else if (cur_state == SORT && swapped_anchor == 2'd0) begin
-            swapped_anchor <= swapped_anchor + 2'd1;
+            swapped_anchor <= 2'd1;
             tmp_x <= px[0];
             tmp_y <= py[0];
             px[0] <= px[anchor_idx];
             py[0] <= py[anchor_idx];
         end else if (cur_state == SORT && swapped_anchor == 2'd1) begin
-            swapped_anchor <= swapped_anchor + 2'd1;
+            swapped_anchor <= 2'd2;
             px[anchor_idx] <= tmp_x;
             py[anchor_idx] <= tmp_y;
         end else if (cur_state == SORT && swapped_anchor == 2'd2) begin
-            if (flag == 1'b0) begin
-                flag <= 1'b1;
-                if (swap_cond) begin
-                    swap_need <= 1'b1;
-                    tmp_x     <= px[i_idx];
-                    tmp_y     <= py[i_idx];
-                end else
-                    swap_need <= 1'b0;
-            end else begin
-                flag <= 1'b0;
-                if (swap_need) begin
-                    px[i_idx]     <= px[i_idx+1];
-                    py[i_idx]     <= py[i_idx+1];
-                    px[i_idx+1]   <= tmp_x;
-                    py[i_idx+1]   <= tmp_y;
+            if (!inserting) begin
+                tmp_x <= px[sorted_idx];
+                tmp_y <= py[sorted_idx];
+                shift_idx <= sorted_idx - 1;
+                inserting <= 1'b1;
+                shift_phase <= 1'b0;
+            end else if (inserting && !shift_phase) begin
+                if (shift_idx >= 1 && cp_insert < 0) begin
+                    shift_x <= px[shift_idx];
+                    shift_y <= py[shift_idx];
+                    shift_phase <= 1'b1;
                 end else begin
-                    px[i_idx]     <= px[i_idx];
-                    py[i_idx]     <= py[i_idx];
-                    px[i_idx+1]   <= px[i_idx+1];
-                    py[i_idx+1]   <= py[i_idx+1];
+                    px[shift_idx + 1] <= tmp_x;
+                    py[shift_idx + 1] <= tmp_y;
+                    sorted_idx <= sorted_idx + 1;
+                    inserting <= 1'b0;
                 end
-                if (i_idx == pass_idx - 1) begin
-                    i_idx    <= 5'd1;
-                    pass_idx <= pass_idx - 1'b1;
-                end else begin
-                    i_idx    <= i_idx + 1'b1;
-                end
+            end else if (inserting && shift_phase) begin
+                px[shift_idx + 1] <= shift_x;
+                py[shift_idx + 1] <= shift_y;
+                shift_idx <= shift_idx - 1;
+                shift_phase <= 1'b0;
             end
         end
     end
@@ -208,9 +199,12 @@ module MCH (
     always @(posedge clk) begin
         if (reset || cur_state == DONE) begin
             top <= 2;                       // stack[0]=0(anchor), stack[1]=1
-            stack[0] <= 0;
-            stack[1] <= 1;
             scan_idx <= 5'd2;
+            stack[0] <= 5'b0;
+            stack[1] <= 5'b1;
+            for (i = 2; i < 20; i = i + 1) begin
+                stack[i] <= 5'b0;
+            end
         end else if (cur_state == LOWER) begin
             if (scan_idx < 5'd20) begin
                 // If the turn is not a left turn (cross ≤ 0), pop the last point
@@ -261,5 +255,7 @@ module MCH (
     //================================================================
     assign area = sum;
     assign Done = (cur_state == DONE);
+
+endmodule
 
 endmodule
